@@ -39,34 +39,49 @@ float *fit(float *X_train, float *y_train, int length, float *paramsArray)
   paramsArray[1] = b;
   return paramsArray;
 }
-float *predict(float *X_test, float m, float b, float *y_pred, int length)
+float *predict(float *test, float m, float b, float *pred, int length,int prediction)
 {
   // Formula For The Prediction Is y = mx+b
   //  Here y is prediction value,m is slope value ,x is value on x axis,b is intercept value
   for (int i = 0; i < length; i++)
-  {
-    y_pred[i] = m * X_test[i] + b;
+  { 
+    if (prediction == 0)
+    {
+    pred[i] = m * test[i] + b;
+      
+    }
+    else
+    {
+      pred[i] = (test[i]-b)/m;
+    }
+    
+    
   }
-  return y_pred;
+  return pred;
 }
+
 int main()
 {
   float X_train[10] = {1.4, 2.2, 3.1, 4.7, 5.3, 6.8, 7.2, 8.8, 9.3, 10.7};
   float y_train[10] = {18, 28, 38, 57, 58, 67, 78, 92, 109, 126};
   int pred_len;
-  printf("Let's Predict Salary With Exprience\n");
+  printf("To Predict Salary With Exprience Type '0' Or For Inverse Type '1' :\n");
+  int inverse ;
+  scanf("%d", &inverse);
+  
   printf("How Much Values You Want To Test : ");
   scanf("%d", &pred_len);
-  float X_test[pred_len];
+  float test[pred_len];
   for (int i = 0; i < pred_len; i++)
   {
     float temp_num;
-    printf("No.%d) Enter Exprience For Prediction : ", i);
+    printf("No.%d) Enter Exprience In Year.Month Or Salary In Thousand For Prediction : ", i);
     scanf("%f", &temp_num);
+    test[i]= temp_num;
 
   }
 
-  float y_pred_temp[pred_len];
+  float pred_temp[pred_len];
   float paramsArray[2];
   // Decaring Variable For Time Calculation
   clock_t start, end;
@@ -78,10 +93,17 @@ int main()
   float m = params[0];
   float b = params[1];
 
-  float *y_pred = predict(X_test, m, b, y_pred_temp, pred_len);
+  float *pred = predict(test, m, b, pred_temp, pred_len,inverse);
   for (int i = 0; i < pred_len; i++)
   {
-    printf("\n Salary for %f year exprience is : %f", X_test[i], y_pred[i]);
+    if (inverse==0)
+    {
+    printf("\n Salary For %f Year Exprience Is  %f Thousand", test[i], pred[i]);
+    }
+    else
+    {
+    printf("\n Exprience Must Be %f Years For %f Thousand Salary", pred[i],test[i]); 
+    }
   }
   printf("\n Time Taken For Training Data is %f", cpu_time_used);
 }
